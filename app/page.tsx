@@ -1,10 +1,11 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { useSidebar } from './provider/SidebarProvider'
 import Sidebar from '@/components/partial/Sidebar'
 import Header from '@/components/partial/Header'
-import { MdOutlineMarkChatRead } from 'react-icons/md'
 import { BsSend } from 'react-icons/bs'
-import Card from '@/components/UI/Card'
+import Content from '@/components/partial/Content'
+
 import {
   Modal,
   ModalContent,
@@ -15,93 +16,77 @@ import {
   useDisclosure,
 } from '@nextui-org/react'
 import { Textarea } from '@nextui-org/react'
-import FeedBackMiniButton from '@/components/UI/FeedBackMiniButton'
+import { translations, ITranslation } from './translation'
+// import FeedBackMiniButton from '@/components/UI/FeedBackMiniButton'
+import BotChatItem from '@/components/UI/BotChatItem'
+import { useAppSelector } from './Redux/store'
+import { useLanguage } from './provider/LanguageContext'
 
 export default function Home() {
   const { isSidebarOpen } = useSidebar()
+  const { language } = useLanguage()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const serviceSample = [
-    {
-      element: <MdOutlineMarkChatRead />,
-      text: 'Choosing the right product for your project',
-    },
-    {
-      element: <MdOutlineMarkChatRead />,
-      text: 'Retrieving specific details of a product (such as coverage, drying time, colours, price, etc.)',
-    },
-    {
-      element: <MdOutlineMarkChatRead />,
-      text: 'Calculating the painting area and the amount of paint needed for your project',
-    },
-    {
-      element: <MdOutlineMarkChatRead />,
-      text: 'Or general home renovation and painting advice',
-    },
-  ]
+  const chatLists = useAppSelector((state) => state.chat.lists)
+  const [customLanguage, setCustomlanguage] = useState<ITranslation>()
+
+  useEffect(() => {
+    if (language === 'en') {
+      setCustomlanguage(translations.eng)
+    } else {
+      setCustomlanguage(translations.slo)
+    }
+  }, [language])
+
   return (
     <div className='bg-gray-200'>
       <div className='container bg-white flex min-h-screen mx-auto'>
-        <Sidebar />
+        {/* <Sidebar /> */}
         <div
           className={`flex flex-col justify-between px-8 relative py-6 transition-all duration-900 gap-10 ease-in-out ${
             isSidebarOpen ? 'w-[70%]' : 'w-[100%]'
           }`}
         >
-          <Header />
-          <div className='container max-w-[90%] lg:max-w-[70] md:max-w-[60%] gap-16 flex flex-col mx-auto'>
-            <div>
-              <div className='flex flex-col gap-4 text-center'>
-                <h4 className='text-[20px] font-[600] leading-[30px]'>
-                  Welcome To
-                </h4>
-                <h2 className='text-[40px] font-[600] leading-[30px]'>
-                  Paint Assistance
-                </h2>
-              </div>
-            </div>
-            <div className='flex flex-col gap-4'>
-              <div className='text-center'>
-                <h5 className='font-[400] leading-[24px] text-[16px] text-gray-600'>
-                  I can help you with:
-                </h5>
-              </div>
-              <div className='flex flex-wrap'>
-                {serviceSample.map((value, index) => {
+          <Header custom={customLanguage} />
+          {chatLists.length > 0 ? (
+            <div className='container grow flex flex-col'>
+              {chatLists.map((value, index) => {
+                if (value.type === 'bot') {
                   return (
-                    <Card
-                      icon={value.element}
-                      text={value.text}
-                      key={index}
-                    ></Card>
+                    <div key={index} className='w-11/12'>
+                      <BotChatItem message={value.message} />
+                    </div>
                   )
-                })}
-              </div>
+                }
+              })}
             </div>
-          </div>
-          <div className='flex justify-around items-center px-6 gap-2'>
-            <div className='w-[20%] text-right text-[14px] font-bold'>
+          ) : (
+            <Content />
+          )}
+
+          <div className='flex justify-center w-full items-center px-6 gap-2'>
+            <div className='flex w-full gap-2 justify-center'>
               <Button
                 radius='full'
                 className='border py-7 px-5'
                 onPress={onOpen}
               >
-                Give Feedback
+                {customLanguage?.report}
               </Button>
-            </div>
-            <div className='w-[80%] text-[14px] relative'>
-              <input
-                type='text'
-                placeholder='Type Any query to search'
-                className='py-5 pl-4 pr-28 rounded-full w-full shadow-custom-inset '
-              />
-              <div className='absolute  right-2 bottom-[5.5px]'>
-                <Button
-                  radius='full'
-                  className='text-white text-lg send_btn_border p-6 bg-gradient-to-tr from-[#FF8C42] to-[#FF6136]'
-                  endContent={<BsSend className='text-sswhite' />}
-                >
-                  send
-                </Button>
+              <div className='w-[80%] text-[14px] relative'>
+                <input
+                  type='text'
+                  placeholder={customLanguage?.placeholder}
+                  className='py-5 pl-4 pr-28 rounded-full w-full shadow-custom-inset focus-visible:outline-none'
+                />
+                <div className='absolute  right-2 bottom-[5.5px]'>
+                  <Button
+                    radius='full'
+                    className='text-white text-lg send_btn_border p-6 bg-gradient-to-tr from-[#FF8C42] to-[#FF6136]'
+                    endContent={<BsSend className='text-sswhite' />}
+                  >
+                    {customLanguage?.sendButton}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -138,26 +123,22 @@ export default function Home() {
             {(onClose) => (
               <>
                 <ModalHeader className='flex flex-col gap-1'>
-                  Feedback
+                  {customLanguage?.reportTitle}
                 </ModalHeader>
                 <ModalBody>
-                  <p>
-                    Please report all wrong or inaccurate bot responses. Please
-                    describe what the issue is and how did you expect the bot to
-                    respond. Positive feedback is also appreciated!
-                  </p>
+                  <p>{customLanguage?.reportInstructions}</p>
                   <Textarea
                     isRequired
-                    placeholder='Enter your feedback'
+                    placeholder={customLanguage?.reportTextPlaceholder}
                     className=''
                   />
                 </ModalBody>
                 <ModalFooter>
                   <Button color='danger' variant='light' onPress={onClose}>
-                    Close
+                    {customLanguage?.closeReportButton}
                   </Button>
                   <Button color='primary' onPress={onClose}>
-                    Report
+                    {customLanguage?.sendReportButton}
                   </Button>
                 </ModalFooter>
               </>

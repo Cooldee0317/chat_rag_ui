@@ -1,11 +1,10 @@
 'use client'
-import { useLanguage } from '@/app/provider/LanguageContext'
 import LanguageButton from '@/components/UI/LanguageButton'
 import ToogleButton from '@/components/UI/ToogleButton'
 import { useSidebar } from '@/app/provider/SidebarProvider'
+import { ITranslation } from '@/app/translation'
 
-function Header() {
-  const { language } = useLanguage()
+function Header({ custom }: { custom?: ITranslation }) {
   const { isSidebarOpen, toogleSidebar } = useSidebar()
 
   return (
@@ -17,11 +16,7 @@ function Header() {
           </div>
         )}
         <div>
-          {language === 'en' ? (
-            <h3 className='font-bold'>Home Renovation Assistance</h3>
-          ) : (
-            <h3 className='font-bold'>Pomoč pri prenovi doma</h3>
-          )}
+          <h3 className='font-bold'>{custom?.header}</h3>
         </div>
       </div>
       <div>
