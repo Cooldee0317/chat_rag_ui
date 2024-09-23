@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSidebar } from './provider/SidebarProvider'
 import Sidebar from '@/components/partial/Sidebar'
 import Header from '@/components/partial/Header'
@@ -31,6 +31,7 @@ export default function Home() {
   const chatLists = useAppSelector((state) => state.chat.lists)
   const [customLanguage, setCustomlanguage] = useState<ITranslation>()
   const [message, setMessage] = useState('')
+  const chatEndRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (language === 'en') {
@@ -40,24 +41,31 @@ export default function Home() {
     }
   }, [language])
 
-  async function sendMessage() {
-    let num = Math.floor(Math.random() * 10)
-    console.log(num)
-    let msg = {}
-    if (num % 2 === 1) {
-      msg = {
-        message: message,
-        type: 'bot',
-      }
-    } else {
-      msg = {
-        message: message,
-        type: 'user',
-      }
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
+  }, [chatLists])
 
-    await dispatch(addChatList(msg))
-    setMessage('')
+  async function sendMessage() {
+    if (message !== '') {
+      let num = Math.floor(Math.random() * 10)
+      let msg = {}
+      if (num % 2 === 1) {
+        msg = {
+          message: message,
+          type: 'bot',
+        }
+      } else {
+        msg = {
+          message: message,
+          type: 'user',
+        }
+      }
+
+      await dispatch(addChatList(msg))
+      setMessage('')
+    }
   }
 
   return (
@@ -65,23 +73,23 @@ export default function Home() {
       <div className='container bg-white flex min-h-screen mx-auto'>
         {/* <Sidebar /> */}
         <div
-          className={`flex flex-col justify-between px-8 relative py-6 transition-all duration-900 gap-10 ease-in-out ${
+          className={`justify-between px-8 relative py-6 transition-all duration-900 gap-10 ease-in-out ${
             isSidebarOpen ? 'w-[70%]' : 'w-[100%]'
           }`}
         >
           <Header custom={customLanguage} />
           {chatLists.length > 0 ? (
-            <div className='container grow gap-2 flex flex-col'>
+            <div className='container h-[calc(100vh-153px)] pb-3 pt-12 overflow-scroll scrollbar-hide flex flex-col'>
               {chatLists.map((value, index) => {
                 if (value.type === 'bot') {
                   return (
-                    <div key={index} className='flex'>
+                    <div key={index} className='flex m-2'>
                       <BotChatItem message={value.message} />
                     </div>
                   )
                 } else if (value.type === 'user') {
                   return (
-                    <div key={index} className='flex justify-end'>
+                    <div key={index} className='flex justify-end m-1'>
                       <div className='max-w-[40%] py-2 px-4 bg-gray-200 rounded-xl'>
                         <p>{value.message}</p>
                       </div>
@@ -89,6 +97,7 @@ export default function Home() {
                   )
                 }
               })}
+              <div></div>
             </div>
           ) : (
             <Content />
