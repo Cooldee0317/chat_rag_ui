@@ -8,7 +8,7 @@ export default function BotChatItem({ message }: MessageProps) {
   const [typed, setTyped] = useState<Typed | undefined>()
 
   return (
-    <div className='inline-block max-w-[80%] p-4 text-white bg-gray-400 rounded-lg'>
+    <div className='inline-block max-w-[80%] p-4rounded-lg'>
       <ReactTyped typedRef={setTyped} strings={[message]} typeSpeed={20} />
     </div>
   )

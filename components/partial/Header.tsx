@@ -10,11 +10,11 @@ function Header({ custom }: { custom?: ITranslation }) {
   return (
     <div className='flex justify-between items-center'>
       <div className='flex items-center gap-3'>
-        {!isSidebarOpen && (
+        {/* {!isSidebarOpen && (
           <div>
             <ToogleButton handleClick={() => toogleSidebar()} />
           </div>
-        )}
+        )} */}
         <div>
           <h3 className='font-bold'>{custom?.header}</h3>
         </div>

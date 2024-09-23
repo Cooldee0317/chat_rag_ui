@@ -19,15 +19,18 @@ import { Textarea } from '@nextui-org/react'
 import { translations, ITranslation } from './translation'
 // import FeedBackMiniButton from '@/components/UI/FeedBackMiniButton'
 import BotChatItem from '@/components/UI/BotChatItem'
-import { useAppSelector } from './Redux/store'
+import { useAppSelector, useAppDispatch } from './Redux/store'
+import { addChatList } from './Redux/chat/chatSlice'
 import { useLanguage } from './provider/LanguageContext'
 
 export default function Home() {
+  const dispatch = useAppDispatch()
   const { isSidebarOpen } = useSidebar()
   const { language } = useLanguage()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const chatLists = useAppSelector((state) => state.chat.lists)
   const [customLanguage, setCustomlanguage] = useState<ITranslation>()
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
     if (language === 'en') {
@@ -36,6 +39,26 @@ export default function Home() {
       setCustomlanguage(translations.slo)
     }
   }, [language])
+
+  async function sendMessage() {
+    let num = Math.floor(Math.random() * 10)
+    console.log(num)
+    let msg = {}
+    if (num % 2 === 1) {
+      msg = {
+        message: message,
+        type: 'bot',
+      }
+    } else {
+      msg = {
+        message: message,
+        type: 'user',
+      }
+    }
+
+    await dispatch(addChatList(msg))
+    setMessage('')
+  }
 
   return (
     <div className='bg-gray-200'>
@@ -48,12 +71,20 @@ export default function Home() {
         >
           <Header custom={customLanguage} />
           {chatLists.length > 0 ? (
-            <div className='container grow flex flex-col'>
+            <div className='container grow gap-2 flex flex-col'>
               {chatLists.map((value, index) => {
                 if (value.type === 'bot') {
                   return (
-                    <div key={index} className='w-11/12'>
+                    <div key={index} className='flex'>
                       <BotChatItem message={value.message} />
+                    </div>
+                  )
+                } else if (value.type === 'user') {
+                  return (
+                    <div key={index} className='flex justify-end'>
+                      <div className='max-w-[40%] py-2 px-4 bg-gray-200 rounded-xl'>
+                        <p>{value.message}</p>
+                      </div>
                     </div>
                   )
                 }
@@ -76,13 +107,16 @@ export default function Home() {
                 <input
                   type='text'
                   placeholder={customLanguage?.placeholder}
-                  className='py-5 pl-4 pr-28 rounded-full w-full shadow-custom-inset focus-visible:outline-none'
+                  className='py-5 pl-4 pr-32 rounded-full w-full shadow-custom-inset focus-visible:outline-none'
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                 />
                 <div className='absolute  right-2 bottom-[5.5px]'>
                   <Button
                     radius='full'
                     className='text-white text-lg send_btn_border p-6 bg-gradient-to-tr from-[#FF8C42] to-[#FF6136]'
                     endContent={<BsSend className='text-sswhite' />}
+                    onClick={() => sendMessage()}
                   >
                     {customLanguage?.sendButton}
                   </Button>

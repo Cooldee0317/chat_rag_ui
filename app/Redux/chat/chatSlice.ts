@@ -12,18 +12,18 @@ export interface IListsState {
 
 const initialState: IListsState = {
   lists: [
-    {
-      message: 'this is template message',
-      type: 'bot',
-    },
-    {
-      message: 'this is template message',
-      type: 'bot',
-    },
-    {
-      message: 'this is template message',
-      type: 'user',
-    },
+    // {
+    //   message: 'this is template messagethis is template messagethis is template messagethis is template messagethis is template messagethis is template messagethis is template messagethis is template message',
+    //   type: 'bot',
+    // },
+    // {
+    //   message: 'this is template message',
+    //   type: 'bot',
+    // },
+    // {
+    //   message: 'this is template user message',
+    //   type: 'user',
+    // },
   ],
 }
 
