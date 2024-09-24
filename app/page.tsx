@@ -17,7 +17,6 @@ import {
 } from '@nextui-org/react'
 import { Textarea } from '@nextui-org/react'
 import { translations, ITranslation } from './translation'
-// import FeedBackMiniButton from '@/components/UI/FeedBackMiniButton'
 import BotChatItem from '@/components/UI/BotChatItem'
 import { useAppSelector, useAppDispatch } from './Redux/store'
 import { addChatList } from './Redux/chat/chatSlice'
@@ -84,7 +83,8 @@ export default function Home() {
                 if (value.type === 'bot') {
                   return (
                     <div key={index} className='flex m-2'>
-                      <BotChatItem message={value.message} />
+                      <BotChatItem message='<h3>this is template</h3>' />
+                      {/* <BotChatItem message={value.message} /> */}
                     </div>
                   )
                 } else if (value.type === 'user') {

@@ -1,5 +1,5 @@
 interface cardProps {
-  icon?: React.ReactElement
+  icon?: string
   text?: string
 }
 
