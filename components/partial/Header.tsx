@@ -1,11 +1,11 @@
 'use client'
 import LanguageButton from '@/components/UI/LanguageButton'
-import ToogleButton from '@/components/UI/ToogleButton'
-import { useSidebar } from '@/app/provider/SidebarProvider'
+// import ToogleButton from '@/components/UI/ToogleButton'
+// import { useSidebar } from '@/app/provider/SidebarProvider'
 import { ITranslation } from '@/app/translation'
 
 function Header({ custom }: { custom?: ITranslation }) {
-  const { isSidebarOpen, toogleSidebar } = useSidebar()
+  // const { isSidebarOpen, toogleSidebar } = useSidebar()
 
   return (
     <div className='flex justify-between items-center'>

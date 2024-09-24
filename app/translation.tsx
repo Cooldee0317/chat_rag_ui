@@ -1,6 +1,6 @@
 export const translations = {
   eng: {
-    header: 'Home Renovation Assistance',
+    header: 'SIQ Bots',
     placeholder: 'Your query',
     sendButton: 'Send',
     initialMessage:
@@ -22,7 +22,7 @@ export const translations = {
     ],
   },
   slo: {
-    header: 'Pomoč pri prenovi doma',
+    header: 'Boti SIQ',
     placeholder: 'Vaše vprašanje',
     sendButton: 'Pošlji',
     initialMessage:
