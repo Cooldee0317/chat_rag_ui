@@ -5,6 +5,11 @@ import Sidebar from '@/components/partial/Sidebar'
 import Header from '@/components/partial/Header'
 import { BsSend } from 'react-icons/bs'
 import Content from '@/components/partial/Content'
+import Axios from '@/utils/axios'
+import 'react-toastify/dist/ReactToastify.css'
+import { showToast } from '@/utils/helper'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 import {
   Modal,
@@ -28,9 +33,13 @@ export default function Home() {
   const { language } = useLanguage()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const chatLists = useAppSelector((state) => state.chat.lists)
+  const writingStatus = useAppSelector((state) => state.chat.writing_status)
   const [customLanguage, setCustomlanguage] = useState<ITranslation>()
   const [message, setMessage] = useState('')
   const chatEndRef = useRef<HTMLDivElement | null>(null)
+  const [currentResponseType, setCurrentResponseType] =
+    useState<string>('INITIAL MESSAGE')
+  const [reportContent, setReportContent] = useState<string>('')
 
   useEffect(() => {
     if (language === 'en') {
@@ -42,28 +51,65 @@ export default function Home() {
 
   useEffect(() => {
     if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' })
+      chatEndRef.current.scrollTop = chatEndRef.current.scrollHeight
     }
   }, [chatLists])
 
   async function sendMessage() {
-    if (message !== '') {
-      let num = Math.floor(Math.random() * 10)
-      let msg = {}
-      if (num % 2 === 1) {
-        msg = {
-          message: message,
-          type: 'bot',
-        }
-      } else {
-        msg = {
-          message: message,
-          type: 'user',
-        }
+    if (message !== '' && !writingStatus) {
+      // let num = Math.floor(Math.random() * 10)
+      // let msg = {}
+      // if (num % 2 === 1) {
+      //   msg = {
+      //     message: message,
+      //     type: 'bot',
+      //   }
+      // } else {
+      //   msg = {
+      //     message: message,
+      //     type: 'user',
+      //   }
+      // }
+
+      const body = JSON.stringify({
+        query: message,
+        conversationID: 'neki',
+        chat_history: [
+          {
+            sender: 'bot',
+            content: 'i am paintassisstence bot',
+            response_type: 'INITIAL MESSAGE',
+          },
+        ],
+        lang: 'eng',
+        previous_search_query: '',
+        colors: [],
+      })
+
+      try {
+        const response = await Axios.post('/invoke', body)
+        console.log(response)
+      } catch (error) {
+        console.error(error)
       }
 
-      await dispatch(addChatList(msg))
+      // await dispatch(addChatList(msg))
       setMessage('')
+    }
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      sendMessage()
+    }
+  }
+
+  function handleReport() {
+    if (reportContent !== '') {
+      console.log('object')
+      return ''
+    } else {
+      return showToast('warning', <p>You should input the report message</p>)
     }
   }
 
@@ -78,13 +124,15 @@ export default function Home() {
         >
           <Header custom={customLanguage} />
           {chatLists.length > 0 ? (
-            <div className='container h-[calc(100vh-153px)] pb-3 pt-12 overflow-scroll scrollbar-hide flex flex-col'>
+            <div
+              ref={chatEndRef}
+              className='container chatbox h-[calc(100vh-185px)] my-4 pb-5 pt-12 overflow-y-auto scrollbar-x-hide flex flex-col'
+            >
               {chatLists.map((value, index) => {
                 if (value.type === 'bot') {
                   return (
                     <div key={index} className='flex m-2'>
-                      <BotChatItem message='<h3>this is template</h3>' />
-                      {/* <BotChatItem message={value.message} /> */}
+                      <BotChatItem message={value.message} />
                     </div>
                   )
                 } else if (value.type === 'user') {
@@ -114,11 +162,13 @@ export default function Home() {
               </Button>
               <div className='w-[80%] text-[14px] relative'>
                 <input
+                  disabled={writingStatus ? true : false}
                   type='text'
                   placeholder={customLanguage?.placeholder}
                   className='py-5 pl-4 pr-32 rounded-full w-full shadow-custom-inset focus-visible:outline-none'
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
                 />
                 <div className='absolute  right-2 bottom-[5.5px]'>
                   <Button
@@ -174,13 +224,15 @@ export default function Home() {
                     isRequired
                     placeholder={customLanguage?.reportTextPlaceholder}
                     className=''
+                    value={reportContent}
+                    onChange={(e) => setReportContent(e.target.value)}
                   />
                 </ModalBody>
                 <ModalFooter>
                   <Button color='danger' variant='light' onPress={onClose}>
                     {customLanguage?.closeReportButton}
                   </Button>
-                  <Button color='primary' onPress={onClose}>
+                  <Button color='primary' onClick={handleReport}>
                     {customLanguage?.sendReportButton}
                   </Button>
                 </ModalFooter>
@@ -188,6 +240,9 @@ export default function Home() {
             )}
           </ModalContent>
         </Modal>
+        <ToastContainer
+          bodyClassName={() => 'text-sm font-white font-med block p-3 flex'}
+        />
       </>
     </div>
   )

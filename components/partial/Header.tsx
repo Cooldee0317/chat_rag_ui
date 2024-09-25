@@ -16,7 +16,7 @@ function Header({ custom }: { custom?: ITranslation }) {
           </div>
         )} */}
         <div>
-          <h3 className='font-bold'>{custom?.header}</h3>
+          <h3 className='font-bold text-[24px] m-0'>{custom?.header}</h3>
         </div>
       </div>
       <div>

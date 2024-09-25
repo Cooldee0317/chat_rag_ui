@@ -7,7 +7,8 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 // }
 
 export interface IListsState {
-  lists: Array<any>
+  lists: Array<any>,
+  writing_status: boolean
 }
 
 const initialState: IListsState = {
@@ -25,6 +26,7 @@ const initialState: IListsState = {
     //   type: 'user',
     // },
   ],
+  writing_status: false
 }
 
 export const chatSlice = createSlice({
@@ -34,8 +36,11 @@ export const chatSlice = createSlice({
     addChatList: (state, action: PayloadAction<Object>) => {
       state.lists = [...state.lists, action.payload]
     },
+    changeWriteStatus: (state, action: PayloadAction<boolean>) => {
+      state.writing_status = action.payload
+    }
   },
 })
 
-export const { addChatList } = chatSlice.actions
+export const { addChatList, changeWriteStatus } = chatSlice.actions
 export const chatReducer = chatSlice.reducer
