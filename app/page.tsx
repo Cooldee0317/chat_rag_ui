@@ -7,9 +7,9 @@ import { BsSend } from 'react-icons/bs'
 import Content from '@/components/partial/Content'
 import Axios from '@/utils/axios'
 import 'react-toastify/dist/ReactToastify.css'
-import { showToast } from '@/utils/helper'
+import { showToast, generateConversationID } from '@/utils/helper'
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css'
 
 import {
   Modal,
@@ -29,17 +29,22 @@ import { useLanguage } from './provider/LanguageContext'
 
 export default function Home() {
   const dispatch = useAppDispatch()
+
   const { isSidebarOpen } = useSidebar()
   const { language } = useLanguage()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const chatLists = useAppSelector((state) => state.chat.lists)
-  const writingStatus = useAppSelector((state) => state.chat.writing_status)
+
   const [customLanguage, setCustomlanguage] = useState<ITranslation>()
   const [message, setMessage] = useState('')
-  const chatEndRef = useRef<HTMLDivElement | null>(null)
   const [currentResponseType, setCurrentResponseType] =
     useState<string>('INITIAL MESSAGE')
   const [reportContent, setReportContent] = useState<string>('')
+  const [buttons, setButtons] = useState([])
+  const [pending, setPending] = useState(false)
+
+  const writingStatus = useAppSelector((state) => state.chat.writing_status)
+  const chatLists = useAppSelector((state) => state.chat.lists)
+  const chatEndRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (language === 'en') {
@@ -56,45 +61,44 @@ export default function Home() {
   }, [chatLists])
 
   async function sendMessage() {
-    if (message !== '' && !writingStatus) {
-      // let num = Math.floor(Math.random() * 10)
-      // let msg = {}
-      // if (num % 2 === 1) {
-      //   msg = {
-      //     message: message,
-      //     type: 'bot',
-      //   }
-      // } else {
-      //   msg = {
-      //     message: message,
-      //     type: 'user',
-      //   }
-      // }
+    if (message !== '') {
+      if (!writingStatus && !pending) {
+        let query = message
 
-      const body = JSON.stringify({
-        query: message,
-        conversationID: 'neki',
-        chat_history: [
-          {
-            sender: 'bot',
-            content: 'i am paintassisstence bot',
-            response_type: 'INITIAL MESSAGE',
-          },
-        ],
-        lang: 'eng',
-        previous_search_query: '',
-        colors: [],
-      })
+        const body = JSON.stringify({
+          query: query,
+          conversationID: generateConversationID(),
+          chat_history: [
+            {
+              sender: 'bot',
+              content: 'i am paintassisstence bot',
+              response_type: 'INITIAL MESSAGE',
+            },
+          ],
+          lang: language,
+          previous_search_query: '',
+          colors: [],
+        })
 
-      try {
-        const response = await Axios.post('/invoke', body)
-        console.log(response)
-      } catch (error) {
-        console.error(error)
+        try {
+          setPending(true)
+          const response = await Axios.post('/invoke', body)
+          if (response.status === 200) {
+            setPending(false)
+            setCurrentResponseType(response.data.response_type)
+            setButtons(response.data.buttons)
+            let msg = {
+              message: response.data.response,
+              type: 'bot',
+            }
+            await dispatch(addChatList(msg))
+          }
+        } catch (error) {
+          console.error(error)
+        }
+
+        setMessage('')
       }
-
-      // await dispatch(addChatList(msg))
-      setMessage('')
     }
   }
 
