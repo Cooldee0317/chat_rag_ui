@@ -48,18 +48,12 @@ export default function Home() {
   const [currentResponseType, setCurrentResponseType] =
     useState<string>('INITIAL MESSAGE')
   const [reportContent, setReportContent] = useState<string>('')
-  const [buttons, setButtons] = useState([
-    'normal',
-    'Can you calculate the amount of paint I will need?',
-    ' What type of primer should I use for a previously painted wall?',
-    ' How do I choose the right color for my room?',
-  ])
+  const [buttons, setButtons] = useState([])
   const [pending, setPending] = useState(false)
 
   const writingStatus = useAppSelector((state) => state.chat.writing_status)
   const chatLists = useAppSelector((state) => state.chat.lists)
   const chatEndRef = useRef<HTMLDivElement | null>(null)
-  console.log(customLanguage)
 
   useEffect(() => {
     if (language === 'eng') {
@@ -75,60 +69,66 @@ export default function Home() {
     }
   }, [chatLists])
 
+  async function requestAPI(value: string) {
+    setButtons([])
+
+    let userMsg = {
+      message: value,
+      type: 'user',
+    }
+
+    dispatch(addChatList(userMsg))
+
+    const body = JSON.stringify({
+      query: value,
+      conversationID: generateConversationID(),
+      chat_history: [
+        {
+          sender: 'bot',
+          content: 'i am paintassisstence bot',
+          response_type: 'INITIAL MESSAGE',
+        },
+      ],
+      lang: language,
+      previous_search_query: '',
+      colors: [],
+    })
+
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://siqbots.com/rag1.0/invoke',
+      headers: {
+        'X-Api-Key': 'swdUNpOVONIbSVUacAmsQgk8rG049TbiQApcPEzRQCo',
+        'Content-Type': 'application/json',
+      },
+      data: body,
+    }
+
+    try {
+      setPending(true)
+      const response = await axios.request(config)
+      if (response.status === 200) {
+        setPending(false)
+        setCurrentResponseType(response.data.response_type)
+        setButtons(response.data.buttons)
+        let msg = {
+          message: response.data.response,
+          type: 'bot',
+        }
+        await dispatch(addChatList(msg))
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   async function sendMessage() {
     if (message !== '') {
       if (!writingStatus && !pending) {
         let query = message
 
-        let userMsg = {
-          message: message,
-          type: 'user',
-        }
-
-        dispatch(addChatList(userMsg))
-
-        const body = JSON.stringify({
-          query: query,
-          conversationID: generateConversationID(),
-          chat_history: [
-            {
-              sender: 'bot',
-              content: 'i am paintassisstence bot',
-              response_type: 'INITIAL MESSAGE',
-            },
-          ],
-          lang: language,
-          previous_search_query: '',
-          colors: [],
-        })
-
-        let config = {
-          method: 'post',
-          maxBodyLength: Infinity,
-          url: 'https://siqbots.com/rag1.0/invoke',
-          headers: { 
-            'X-Api-Key': 'swdUNpOVONIbSVUacAmsQgk8rG049TbiQApcPEzRQCo', 
-            'Content-Type': 'application/json'
-          },
-          data : body
-        };
-
-        try {
-          setPending(true)
-          const response = await axios.request(config)
-          if (response.status === 200) {
-            setPending(false)
-            setCurrentResponseType(response.data.response_type)
-            setButtons(response.data.buttons)
-            let msg = {
-              message: response.data.response,
-              type: 'bot',
-            }
-            await dispatch(addChatList(msg))
-          }
-        } catch (error) {
-          console.error(error)
-        }
+        requestAPI(query)
 
         setMessage('')
       }
@@ -183,9 +183,19 @@ export default function Home() {
                 }
               })}
               <div className='button_container flex flex-wrap gap-2'>
-                {buttons.map((value, index) => {
-                  return <Button key={index} color="primary" variant="bordered">{value}</Button>
-                })}
+                {buttons.length > 0 &&
+                  buttons.map((value, index) => {
+                    return (
+                      <Button
+                        key={index}
+                        onClick={() => requestAPI(value)}
+                        color='primary'
+                        variant='bordered'
+                      >
+                        {value}
+                      </Button>
+                    )
+                  })}
               </div>
               <BeatLoader
                 loading={pending}
