@@ -21,7 +21,7 @@ export const translations = {
       'Calculate the amount of paint needed for my project',
     ],
   },
-  slo: {
+  svn: {
     header: 'Boti SIQ',
     placeholder: 'Vaše vprašanje',
     sendButton: 'Pošlji',

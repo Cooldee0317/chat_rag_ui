@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, CSSProperties } from 'react'
 import { useSidebar } from './provider/SidebarProvider'
 import Sidebar from '@/components/partial/Sidebar'
 import Header from '@/components/partial/Header'
@@ -10,6 +10,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import { showToast, generateConversationID } from '@/utils/helper'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import BeatLoader from 'react-spinners/BeatLoader'
+import axios from 'axios'
 
 import {
   Modal,
@@ -27,6 +29,13 @@ import { useAppSelector, useAppDispatch } from './Redux/store'
 import { addChatList } from './Redux/chat/chatSlice'
 import { useLanguage } from './provider/LanguageContext'
 
+const override: CSSProperties = {
+  display: 'inline-block',
+  borderColor: 'red',
+  textAlign: 'left',
+  marginLeft: '10px',
+}
+
 export default function Home() {
   const dispatch = useAppDispatch()
 
@@ -39,18 +48,24 @@ export default function Home() {
   const [currentResponseType, setCurrentResponseType] =
     useState<string>('INITIAL MESSAGE')
   const [reportContent, setReportContent] = useState<string>('')
-  const [buttons, setButtons] = useState([])
+  const [buttons, setButtons] = useState([
+    'normal',
+    'Can you calculate the amount of paint I will need?',
+    ' What type of primer should I use for a previously painted wall?',
+    ' How do I choose the right color for my room?',
+  ])
   const [pending, setPending] = useState(false)
 
   const writingStatus = useAppSelector((state) => state.chat.writing_status)
   const chatLists = useAppSelector((state) => state.chat.lists)
   const chatEndRef = useRef<HTMLDivElement | null>(null)
+  console.log(customLanguage)
 
   useEffect(() => {
-    if (language === 'en') {
+    if (language === 'eng') {
       setCustomlanguage(translations.eng)
     } else {
-      setCustomlanguage(translations.slo)
+      setCustomlanguage(translations.svn)
     }
   }, [language])
 
@@ -64,6 +79,13 @@ export default function Home() {
     if (message !== '') {
       if (!writingStatus && !pending) {
         let query = message
+
+        let userMsg = {
+          message: message,
+          type: 'user',
+        }
+
+        dispatch(addChatList(userMsg))
 
         const body = JSON.stringify({
           query: query,
@@ -80,9 +102,20 @@ export default function Home() {
           colors: [],
         })
 
+        let config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: 'https://siqbots.com/rag1.0/invoke',
+          headers: { 
+            'X-Api-Key': 'swdUNpOVONIbSVUacAmsQgk8rG049TbiQApcPEzRQCo', 
+            'Content-Type': 'application/json'
+          },
+          data : body
+        };
+
         try {
           setPending(true)
-          const response = await Axios.post('/invoke', body)
+          const response = await axios.request(config)
           if (response.status === 200) {
             setPending(false)
             setCurrentResponseType(response.data.response_type)
@@ -149,7 +182,18 @@ export default function Home() {
                   )
                 }
               })}
-              <div></div>
+              <div className='button_container flex flex-wrap gap-2'>
+                {buttons.map((value, index) => {
+                  return <Button key={index} color="primary" variant="bordered">{value}</Button>
+                })}
+              </div>
+              <BeatLoader
+                loading={pending}
+                cssOverride={override}
+                size={10}
+                aria-label='Loading Spinner'
+                data-testid='loader'
+              />
             </div>
           ) : (
             <Content />

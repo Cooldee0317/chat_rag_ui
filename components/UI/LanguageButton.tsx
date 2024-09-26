@@ -17,15 +17,15 @@ export default function LanguageButton() {
       <DropdownTrigger>
         <Button variant='bordered'>
           <MdLanguage />
-          {language === 'en' ? 'English' : 'Slovenščina'}{' '}
+          {language === 'eng' ? 'English' : 'Slovenščina'}{' '}
           <MdKeyboardArrowDown />
         </Button>
       </DropdownTrigger>
       <DropdownMenu aria-label='Static Actions'>
-        <DropdownItem onClick={() => changeLanguage('en')} key='new'>
+        <DropdownItem onClick={() => changeLanguage('eng')} key='new'>
           English
         </DropdownItem>
-        <DropdownItem onClick={() => changeLanguage('si')} key='copy'>
+        <DropdownItem onClick={() => changeLanguage('svn')} key='copy'>
           Slovenščina
         </DropdownItem>
       </DropdownMenu>
