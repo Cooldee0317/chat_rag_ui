@@ -358,8 +358,6 @@ export default function Home() {
           ))}
         </div>
       )
-    } else {
-      console.log(`first word of buttons is incorrect: ${buttons}`)
     }
   }
 

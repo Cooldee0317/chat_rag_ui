@@ -8,7 +8,6 @@ interface cardProps {
 
 export default function Card(props: cardProps) {
   const { icon, title, order, text, requestAPI } = props
-  console.log(order)
 
   function handleClick() {
     let body
