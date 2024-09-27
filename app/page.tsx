@@ -416,7 +416,7 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            <Content />
+            <Content requestAPI={requestAPI} />
           )}
 
           <div className='flex justify-center w-full items-center px-6 gap-2'>

@@ -1,6 +1,9 @@
-import { MdOutlineMarkChatRead } from 'react-icons/md'
 import Card from '@/components/UI/Card'
-export default function Content() {
+
+interface ContentProps {
+  requestAPI: (value: string) => void
+}
+export default function Content({ requestAPI }: ContentProps) {
   const serviceSample = [
     {
       element: '🎨',
@@ -41,6 +44,8 @@ export default function Content() {
                 title={value.title}
                 text={value.text}
                 key={index}
+                order={index}
+                requestAPI={requestAPI}
               ></Card>
             )
           })}
