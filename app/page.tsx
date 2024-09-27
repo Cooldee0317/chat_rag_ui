@@ -414,7 +414,7 @@ export default function Home() {
               <div
                 className={`button_container w-full flex flex-wrap justify-center gap-2`}
               >
-                <CateEle type='calc3'/>
+                {renderButtons()}
               </div>
             </div>
           ) : (
