@@ -24,10 +24,10 @@ export default function Content() {
     },
   ]
   return (
-    <div className='container max-w-[90%] h-[calc(100vh-153px)] lg:max-w-[70] md:max-w-[60%] gap-16 flex flex-col justify-center mx-auto'>
+    <div className='container max-w-[90%] h-[calc(100vh-153px)] lg:max-w-[70] md:max-w-[60%] gap-2 sm:gap-16 flex flex-col justify-center mx-auto'>
       <div>
         <div className='flex flex-col gap-4 text-center'>
-          <h2 className='text-[40px] font-[600] leading-[30px] text-[#FF6136]'>
+          <h2 className='text-3xl sm:text-[40px] font-[600] leading-[30px] text-[#FF6136]'>
             JUB P<span className='text-black'>AI</span>NTER
           </h2>
         </div>

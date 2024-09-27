@@ -36,7 +36,7 @@ export default function BotChatItem({ message }: MessageProps) {
   }
 
   return (
-    <div className='inline-block max-w-[80%] p-2 rounded-lg'>
+    <div className='inline-block max-w-[80%] p-2 rounded-lg bg-gray-200'>
       <ReactTyped
         strings={[htmlContent]}
         typeSpeed={5}

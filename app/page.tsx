@@ -393,7 +393,7 @@ export default function Home() {
                   } else if (value.type === 'user') {
                     return (
                       <div key={index} className='flex justify-end m-1'>
-                        <div className='max-w-[40%] py-2 px-4 bg-gray-200 rounded-xl'>
+                        <div className='max-w-[40%] py-2 px-4 bg-[#e56634a8] text-white rounded-xl'>
                           <p>{value.message}</p>
                         </div>
                       </div>

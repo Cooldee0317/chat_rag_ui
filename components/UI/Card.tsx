@@ -13,7 +13,7 @@ export default function Card(props: cardProps) {
         <div>
           <span className='font-bold'>{title}</span>
         </div>
-        <p className='font-[400] leading-[24px] text-lg'>{text}</p>
+        <p className='font-[400] leading-[24px] text-medium sm:text-lg'>{text}</p>
       </div>
     </div>
   )
