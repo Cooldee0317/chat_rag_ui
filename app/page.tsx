@@ -1,17 +1,15 @@
 'use client'
 import { useState, useEffect, useRef, CSSProperties } from 'react'
 import { useSidebar } from './provider/SidebarProvider'
-import Sidebar from '@/components/partial/Sidebar'
 import Header from '@/components/partial/Header'
 import { BsSend } from 'react-icons/bs'
 import Content from '@/components/partial/Content'
-import Axios from '@/utils/axios'
 import 'react-toastify/dist/ReactToastify.css'
 import { showToast, generateConversationID } from '@/utils/helper'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import BeatLoader from 'react-spinners/BeatLoader'
-import axios from 'axios'
+import Axios from '@/utils/axios'
 
 import {
   Modal,
@@ -24,7 +22,6 @@ import {
   Input,
   Select,
   SelectItem,
-  Selection,
 } from '@nextui-org/react'
 import { Textarea } from '@nextui-org/react'
 import { translations, ITranslation } from './translation'
@@ -100,20 +97,9 @@ export default function Home() {
       previous_search_query: '',
     })
 
-    let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://siqbots.com/rag1.0/invoke',
-      headers: {
-        'X-Api-Key': 'swdUNpOVONIbSVUacAmsQgk8rG049TbiQApcPEzRQCo',
-        'Content-Type': 'application/json',
-      },
-      data: body,
-    }
-
     try {
       setPending(true)
-      const response = await axios.request(config)
+      const response = await Axios.post('/invoke', body)
       if (response.status === 200) {
         setPending(false)
         setCurrentResponseType(response.data.response_type)
@@ -159,10 +145,22 @@ export default function Home() {
     }
   }
 
-  function handleReport() {
+  async function handleReport() {
     if (reportContent !== '') {
-      console.log('object')
-      return ''
+      let body = {
+        chat_history: chatLists,
+        message: reportContent,
+      }
+
+      try {
+        const response = await Axios.post('/report', body)
+        if (response.data.status === true) {
+          showToast('success', 'Send report successfully')
+        }
+        setReportContent('')
+      } catch (error: any) {
+        showToast('error', <p>{error.message}</p>)
+      }
     } else {
       return showToast('warning', <p>You should input the report message</p>)
     }
@@ -379,7 +377,7 @@ export default function Home() {
           }`}
         >
           <Header custom={customLanguage} />
-          {chatLists.length > 0 ? (
+          {chatLists.length > 1 ? (
             <div
               ref={chatEndRef}
               className='container chatbox h-[calc(100vh-185px)] my-4 pb-5 pt-12 overflow-y-auto scrollbar-x-hide flex flex-col justify-between'
@@ -502,7 +500,11 @@ export default function Home() {
                   <Button color='danger' variant='light' onPress={onClose}>
                     {customLanguage?.closeReportButton}
                   </Button>
-                  <Button color='primary' onClick={handleReport}>
+                  <Button
+                    color='primary'
+                    onPress={onClose}
+                    onClick={handleReport}
+                  >
                     {customLanguage?.sendReportButton}
                   </Button>
                 </ModalFooter>
