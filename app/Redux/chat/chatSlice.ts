@@ -15,8 +15,8 @@ export interface IListsState {
 const initialState: IListsState = {
   lists: [
     {
-      message: 'Welcome to Paint Assistence! You can choose one of the following options or ask me anything regarding home renovation or painting! I will be glad to help.🎨',
-      type: 'bot',
+      content: 'Welcome to Paint Assistence! You can choose one of the following options or ask me anything regarding home renovation or painting! I will be glad to help.🎨',
+      sender: 'bot',
       response_type: 'INITIAL MESSAGE'
     },
   ],

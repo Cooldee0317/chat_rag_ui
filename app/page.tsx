@@ -83,8 +83,8 @@ export default function Home() {
     setButtons([])
 
     let userMsg = {
-      message: value,
-      type: 'user',
+      content: value,
+      sender: 'user',
     }
 
     dispatch(addChatList(userMsg))
@@ -105,8 +105,8 @@ export default function Home() {
         setCurrentResponseType(response.data.response_type)
         setButtons(response.data.buttons)
         let msg = {
-          message: response.data.response,
-          type: 'bot',
+          content: response.data.response,
+          sender: 'bot',
           response_type: response.data.response_type,
         }
         await dispatch(addChatList(msg))
@@ -382,17 +382,17 @@ export default function Home() {
             >
               <div>
                 {chatLists.map((value, index) => {
-                  if (value.type === 'bot') {
+                  if (value.sender === 'bot') {
                     return (
                       <div key={index} className='flex m-2'>
-                        <BotChatItem message={value.message} />
+                        <BotChatItem message={value.content} />
                       </div>
                     )
-                  } else if (value.type === 'user') {
+                  } else if (value.sender === 'user') {
                     return (
                       <div key={index} className='flex justify-end m-1'>
                         <div className='max-w-[40%] py-2 px-4 bg-[#e56634a8] text-white rounded-xl'>
-                          <p>{value.message}</p>
+                          <p>{value.content}</p>
                         </div>
                       </div>
                     )
