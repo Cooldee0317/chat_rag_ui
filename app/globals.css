@@ -95,6 +95,42 @@ h6 {
   font-weight: bold;
 }
 
+ol {
+  display: block;
+  list-style-type: decimal; /* Sets the number style (e.g., 1, 2, 3...) */
+  margin-block-start: 1em;  /* Top margin */
+  margin-block-end: 1em;    /* Bottom margin */
+  margin-inline-start: 0;   /* Left margin */
+  margin-inline-end: 0;     /* Right margin */
+  padding-inline-start: 40px; /* Left padding */
+}
+
+ul {
+  display: block;
+  list-style-type: disc;  /* Sets bullet style */
+  margin-block-start: 1em;  /* Top margin */
+  margin-block-end: 1em;    /* Bottom margin */
+  margin-inline-start: 0;   /* Left margin */
+  margin-inline-end: 0;     /* Right margin */
+  padding-inline-start: 40px; /* Left padding */
+}
+
+/* Default CSS for li (list item) */
+li {
+  display: list-item;
+  text-align: -webkit-match-parent; /* Default alignment for list items */
+}
+
+/* ol nested within another ol */
+ol ol {
+  list-style-type: lower-alpha; /* Change nested ordered list style to a, b, c, etc. */
+}
+
+/* ol nested deeper (e.g., 3rd level) */
+ol ol ol {
+  list-style-type: lower-roman; /* Change nested list style to i, ii, iii, etc. */
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }

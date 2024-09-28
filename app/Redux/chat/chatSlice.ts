@@ -32,9 +32,12 @@ export const chatSlice = createSlice({
     },
     changeWriteStatus: (state, action: PayloadAction<boolean>) => {
       state.writing_status = action.payload
+    },
+    addInfo: (state, action:PayloadAction<string>) => {
+      state.lists[state.lists.length - 1].content += action.payload
     }
   },
 })
 
-export const { addChatList, changeWriteStatus } = chatSlice.actions
+export const { addChatList, changeWriteStatus, addInfo } = chatSlice.actions
 export const chatReducer = chatSlice.reducer

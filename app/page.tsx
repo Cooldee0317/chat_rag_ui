@@ -22,19 +22,28 @@ import {
   Input,
   Select,
   SelectItem,
+  RadioGroup, Radio, CheckboxGroup, Checkbox
 } from '@nextui-org/react'
 import { Textarea } from '@nextui-org/react'
 import { translations, ITranslation } from './translation'
 import BotChatItem from '@/components/UI/BotChatItem'
 import { useAppSelector, useAppDispatch } from './Redux/store'
-import { addChatList } from './Redux/chat/chatSlice'
+import { addChatList, addInfo } from './Redux/chat/chatSlice'
 import { useLanguage } from './provider/LanguageContext'
+import { PiCloudSnowLight } from 'react-icons/pi'
+import { MdExpandMore } from "react-icons/md";
 
 const override: CSSProperties = {
   display: 'inline-block',
   borderColor: 'red',
   textAlign: 'left',
   marginLeft: '10px',
+}
+
+interface ColorProps {
+  link: string
+  rgb: string
+  name: string
 }
 
 export default function Home() {
@@ -44,26 +53,46 @@ export default function Home() {
   const { language } = useLanguage()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
+  const [chatLists, setChatLists] = useState<any[]>([{
+    content: 'Welcome to Paint Assistence! You can choose one of the following options or ask me anything regarding home renovation or painting! I will be glad to help.🎨',
+    sender: 'bot',
+    response_type: 'INITIAL MESSAGE'
+  }])
   const [customLanguage, setCustomlanguage] = useState<ITranslation>()
   const [message, setMessage] = useState('')
   const [currentResponseType, setCurrentResponseType] =
     useState<string>('INITIAL MESSAGE')
+  const [currentSearchQuery, setCurrentSearchQuery] = useState<any>('')
+  const [conversationID, setConversationID] = useState<string>('')
   const [reportContent, setReportContent] = useState<string>('')
   const [buttons, setButtons] = useState([])
+  const [colours, setColours] = useState<ColorProps[]>([])
   const [pending, setPending] = useState(false)
-  const [height, setHeight] = useState<string>()
-  const [length, setLength] = useState<string>()
-  const [width, setWidth] = useState<string>()
-  const [windows, setWindows] = useState<string>()
-  const [doors, setDoors] = useState<string>()
-  const [ceiling, setCeiling] = useState<string>('')
-  const [doorArea, setDoorArea] = useState<string>()
-  const [windowArea, setWindowArea] = useState<string>()
-  const [additionalArea, setAdditionalArea] = useState<string>()
+  const [height, setHeight] = useState<string>("0")
+  const [length, setLength] = useState<string>("0")
+  const [width, setWidth] = useState<string>("0")
+  const [windows, setWindows] = useState<string>("0")
+  const [doors, setDoors] = useState<string>("0")
+  const [ceiling, setCeiling] = useState<string>("0")
+  const [doorArea, setDoorArea] = useState<string>("0")
+  const [windowArea, setWindowArea] = useState<string>("0")
+  const [additionalArea, setAdditionalArea] = useState<string>("0")
+  const [area, setArea] = useState<string>("0")
+  const [washability, setWashability] = useState<string>('')
+  const [coverage, setCoverage] = useState<string>('')
+  const [priceRange, setPriceRange] = useState<string>('')
+  const [finish, setFinish] = useState<string>('')
+  const [features, setFeatures] = useState<any[]>([])
+  const [moreFeatures, setMoreFeatures] = useState<boolean>(false)
 
   const writingStatus = useAppSelector((state) => state.chat.writing_status)
-  const chatLists = useAppSelector((state) => state.chat.lists)
+  const chat_history = useAppSelector((state) => state.chat.lists)
   const chatEndRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    let id = generateConversationID()
+    setConversationID(id)
+  }, [])
 
   useEffect(() => {
     if (language === 'eng') {
@@ -81,6 +110,7 @@ export default function Home() {
 
   async function requestAPI(value: string) {
     setButtons([])
+    setColours([])
 
     let userMsg = {
       content: value,
@@ -88,13 +118,16 @@ export default function Home() {
     }
 
     dispatch(addChatList(userMsg))
+    setChatLists((prev) => {
+      return [...prev, userMsg]
+    })
 
     const body = JSON.stringify({
       query: value,
-      conversationID: generateConversationID(),
-      chat_history: chatLists,
+      conversationID: conversationID,
+      chat_history: chat_history,
       lang: language,
-      previous_search_query: '',
+      previous_search_query: currentSearchQuery,
     })
 
     try {
@@ -103,13 +136,18 @@ export default function Home() {
       if (response.status === 200) {
         setPending(false)
         setCurrentResponseType(response.data.response_type)
+        setCurrentSearchQuery(response.data.current_search_query)
         setButtons(response.data.buttons)
+        setColours(response.data? response.data.colours: [])
         let msg = {
           content: response.data.response,
           sender: 'bot',
           response_type: response.data.response_type,
         }
         await dispatch(addChatList(msg))
+        setChatLists((prev) => {
+          return [...prev, msg]
+        })
       }
     } catch (error: any) {
       showToast('error', <p>{error.message}</p>)
@@ -118,24 +156,26 @@ export default function Home() {
   }
 
   async function sendMessage() {
-    if (message !== '') {
-      if (!writingStatus && !pending) {
-        let query
-        if (currentResponseType === 'CALCULATION TYPE2') {
-          query = `{"type":"2","area":0,"height":${height},"length":${length},"width":${width},"door area":0,"window area":0,"doors number":${doors},"windows number":${windows},"additional unpaintable areas":0,"ceiling":${
-            ceiling === 'yes' ? true : false
+    if (!writingStatus && !pending) {
+      let query
+      if (currentResponseType === 'CALCULATION TYPE1') {
+        query = `{"type":"1","area":${area},"height":0,"length":0,"width":0,"door area":0,"window area":0,"doors number":0,"windows number":0,"additional unpaintable areas":0
+          }`
+      } else if (currentResponseType === 'CALCULATION TYPE2') {
+        query = `{"type":"2","area":0,"height":"${height}","length":"${length}","width":"${width}","door area":0,"window area":0,"doors number":${doors},"windows number":"${windows}","additional unpaintable areas":0,"ceiling":${ceiling === 'yes' ? true : false
           }}`
-        } else if (currentResponseType === 'CALCULATION TYPE3') {
-          query = `{"type":"3","area":0,"height":${height},"length":${length},"width":${width},"door area":${doorArea},"window area":${windowArea},"doors number":${doors},"windows number":${windows},"additional unpaintable areas":${additionalArea},"ceiling":${
-            ceiling === 'yes' ? true : false
+      } else if (currentResponseType === 'CALCULATION TYPE3') {
+        query = `{"type":"3","area":0,"height":"${height}","length":"${length}","width":"${width}","door area":"${doorArea}","window area":"${windowArea}","doors number":"${doors}","windows number":"${windows}","additional unpaintable areas":"${additionalArea}","ceiling":${ceiling === 'yes' ? true : false
           }}`
-        } else {
-          query = message
-        }
-
-        requestAPI(query)
-        setMessage('')
+      } else if (currentResponseType === 'ADDITIONAL INFO') {
+        query = `User selection: Washability: ${washability}, Coverage: ${coverage}, Price range: ${priceRange}, Finish: ${finish}, Features: ${features.toString()}`
+      } else {
+        if (message === '') return
+        query = message
       }
+
+      requestAPI(query)
+      setMessage('')
     }
   }
 
@@ -166,16 +206,88 @@ export default function Home() {
     }
   }
 
+  const handleRadioChange = (category: string, value: string) => {
+    console.log(category, value)
+    switch (category) {
+      case "Washability":
+        setWashability(value);
+        break;
+      case "Coverage":
+        setCoverage(value);
+        break;
+      case "Price range":
+        setPriceRange(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+
   const addCategoriesSection = (categories: any[], remainingButtons: any[]) => {
     return (
-      <div>
-        <h4>Categories</h4>
-        <ul>
-          {categories.map((category, index) => (
-            <li key={index}>{category}</li>
-          ))}
-        </ul>
-        <p>Remaining buttons: {remainingButtons.join(', ')}</p>
+      <div className='bg-[#F1F6F6] flex flex-col gap-2 p-4 rounded-md w-full md:w-1/2'>
+        {categories.map((category, index) => (
+          <RadioGroup
+            label={category}
+            orientation="horizontal"
+            key={index}
+            value={(() => {
+              switch (category) {
+                case "Washability":
+                  return washability;
+                case "Coverage":
+                  return coverage;
+                case "Price range":
+                  return priceRange;
+                default:
+                  return "";
+              }
+            })()}
+            onChange={(e) => handleRadioChange(category, e.target.value)}
+          >
+            <Radio value="High">High</Radio>
+            <Radio value="Middle">Middle</Radio>
+            <Radio value="Low">Low</Radio>
+            <Radio value="Not Important">Not Important</Radio>
+          </RadioGroup>
+        ))}
+        <RadioGroup
+          label="Finish"
+          orientation="horizontal"
+          value={finish}
+          onChange={(e) => setFinish(e.target.value)}
+        >
+          {
+            remainingButtons.map((value, index) => {
+              if (index < 4) {
+                return (
+                  <Radio key={index} value={value}>{value}</Radio>
+                )
+              }
+            })
+          }
+        </RadioGroup>
+        <div>
+          <CheckboxGroup
+            label="Select cities"
+            orientation="horizontal"
+            color="primary"
+            value={features}
+            onValueChange={setFeatures}
+          >
+            {
+              remainingButtons.map((value, index,) => {
+                if (index > 3) {
+                  return <Checkbox key={index} className={!moreFeatures && index > 8 ? 'hidden' : 'inline-flex'} value={value}>{value}</Checkbox>
+                }
+              })
+            }
+            {
+              !moreFeatures && <Button isIconOnly color="primary" size="sm" aria-label="More" onClick={() => setMoreFeatures(!moreFeatures)}><MdExpandMore /></Button>
+            }
+          </CheckboxGroup>
+        </div>
       </div>
     )
   }
@@ -305,12 +417,12 @@ export default function Home() {
               type='text'
               label='Area'
               variant='bordered'
-              value={message}
-              onValueChange={setMessage}
+              value={area}
+              onValueChange={setArea}
             />
           </div>
         )
-      } else if (first === 'calc2') {
+      } else if (first === 'calc2' || first === 'calc3') {
         return <CateEle type={first} />
       }
     } else if (first === 'normal') {
@@ -320,34 +432,29 @@ export default function Home() {
             <Button
               className='bg-[#F1F6F6]'
               key={index}
-              onClick={() => {
-                if (msg === 'Colour chart') {
+              onClick={async () => {
+                if (msg === 'Colour Chart') {
                   window.open(
                     'https://www.jub.si/barvni-odtenki-in-navdihi/barvna-karta-jub-favourite-feelings/?category=Joy',
                     '_blank'
                   )
-                  const addon = `🎨**Once you've found the color that speaks to you, let's dive into finding the perfect paint to match!**\n\nTo get started, could you share a bit more about the **room** you're painting? And if you have any preferences, such as:\n- **Budget**\n- **Washability**\n- **Health impact** (like low VOCs or allergies)\n- **Special features** (like mold protection, stain resistance, thermal insulation, etc.)\n\nI'm here to help you find exactly what you're looking for! Let's make this project a breeze!🏠✨`
-                  requestAPI(addon)
-                } else if (msg === 'Jupol trend catalogue') {
-                  window.open(
-                    'https://www.jub.si/izdelki/jupol-trend/',
-                    '_blank'
-                  )
-                } else if (msg === 'Jupol junior catalogue') {
-                  window.open(
-                    'https://www.jub.si/izdelki/jupol-junior/',
-                    '_blank'
-                  )
-                } else if (msg == 'Designer Colours') {
-                  window.open(
-                    'https://www.jub.eu/surprising-ideas-for-painting-walls/',
-                    '_blank'
-                  )
-                } else if (msg == 'DECOR Range') {
-                  window.open(
-                    'https://www.jub.eu/system-solutions-diy/dekorativne-resitve-en/',
-                    '_blank'
-                  )
+                  const addon = `🎨Once you've found the color that speaks to you, let's dive into finding the perfect paint to match!\n\nTo get started, could you share a bit more about the room you're painting? And if you have any preferences, such as:\n- Budget\n- Washability\n- Health impact (like low VOCs or allergies)\n- Special features (like mold protection, stain resistance, thermal insulation, etc.)\n\nI'm here to help you find exactly what you're looking for! Let's make this project a breeze!🏠✨`
+                  let msg = {
+                    content: addon,
+                    sender: 'bot',
+                  }
+                  await dispatch(addInfo(addon))
+                  setChatLists((prev) => {
+                    return [...prev, msg]
+                  })
+                } else if (msg == "JUPOL TREND Catalogue") {
+                  window.open("https://www.jub.si/izdelki/jupol-trend/", "_blank");
+                } else if (msg == "JUPOL JUNIOR Catalogue") {
+                  window.open("https://www.jub.si/izdelki/jupol-junior/", "_blank");
+                } else if (msg == "Designer Colours") {
+                  window.open("https://www.jub.eu/surprising-ideas-for-painting-walls/", "_blank");
+                } else if (msg == "DECOR Range") {
+                  window.open("https://www.jub.eu/system-solutions-diy/dekorativne-resitve-en/", "_blank");
                 } else {
                   requestAPI(msg)
                 }
@@ -370,15 +477,14 @@ export default function Home() {
       <div className='container bg-white flex min-h-screen mx-auto'>
         {/* <Sidebar /> */}
         <div
-          className={`justify-between px-8 relative py-6 transition-all duration-900 gap-10 ease-in-out ${
-            isSidebarOpen ? 'w-[70%]' : 'w-[100%]'
-          }`}
+          className={`justify-between px-8 relative py-6 transition-all duration-900 gap-10 ease-in-out ${isSidebarOpen ? 'w-[70%]' : 'w-[100%]'
+            }`}
         >
           <Header custom={customLanguage} />
           {chatLists.length > 1 ? (
             <div
               ref={chatEndRef}
-              className='container chatbox h-[calc(100vh-185px)] my-4 pb-5 pt-12 overflow-y-auto scrollbar-x-hide flex flex-col justify-between'
+              className='container chatbox h-[calc(100vh-185px)] my-4 pb-5 pt-12 px-3 overflow-y-auto scrollbar-x-hide flex flex-col justify-between'
             >
               <div>
                 {chatLists.map((value, index) => {
@@ -391,7 +497,7 @@ export default function Home() {
                   } else if (value.sender === 'user') {
                     return (
                       <div key={index} className='flex justify-end m-1'>
-                        <div className='max-w-[40%] py-2 px-4 bg-[#e56634a8] text-white rounded-xl'>
+                        <div className='max-w-full sm:max-w-[70%] py-2 px-4 bg-[#e56634a8] text-white rounded-xl'>
                           <p>{value.content}</p>
                         </div>
                       </div>
@@ -407,10 +513,30 @@ export default function Home() {
                   data-testid='loader'
                 />
               </div>
-              <div
-                className={`button_container w-full flex flex-wrap justify-center gap-2`}
-              >
-                {renderButtons()}
+              <div className='w-full flex flex-col gap-2'>
+                <div className='w-full flex justify-center'>
+                  <div className={`color_box w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-${colours.length} lg:w-[60%] gap-2`}>
+                    {
+                      colours.length > 0 && colours.map((value, index) => {
+                        return (
+                          <div className={`cursor-pointer px-1 h-20 flex justify-center items-center rounded-md`} onClick={() => {
+                            window.open(value.link)
+                          }} style={{ backgroundColor: `rgb${value.rgb}` }} key={index}>
+                            <div className='text-center text-sm'>
+                              <p>{value.name}</p>
+                              <p>{value.rgb}</p>
+                            </div>
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
+                </div>
+                <div
+                  className='button_container w-full flex flex-wrap justify-center gap-2'
+                >
+                  {renderButtons()}
+                </div>
               </div>
             </div>
           ) : (

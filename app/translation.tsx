@@ -32,7 +32,7 @@ export const translations = {
     reportInstructions:
       'Ta obrazec uporabite za prijavo zavajujočih, napačnih ali pokvarjenih pogovorov z robotom razvijalcem. Opišite težavo v okvirček spodaj in stisnite Pošlji. Celoten trenuten pogovor, prikazan zgoraj, bo pripet vaši prijavi.',
     sendReportButton: 'Pošlji prijavo',
-    closeReportButton: 'blizu',
+    closeReportButton: 'Zapri',
     reportTextPlaceholder: 'Tu opišite vašo pripombo ...',
     initial_buttons: [
       'normal',

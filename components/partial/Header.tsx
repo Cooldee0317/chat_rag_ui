@@ -1,7 +1,6 @@
 'use client'
 import LanguageButton from '@/components/UI/LanguageButton'
-// import ToogleButton from '@/components/UI/ToogleButton'
-// import { useSidebar } from '@/app/provider/SidebarProvider'
+import Link from 'next/link'
 import { ITranslation } from '@/app/translation'
 
 function Header({ custom }: { custom?: ITranslation }) {
@@ -16,7 +15,7 @@ function Header({ custom }: { custom?: ITranslation }) {
           </div>
         )} */}
         <div>
-          <h3 className='font-bold text-[24px] m-0'>{custom?.header}</h3>
+          <Link href="https://siqbots.com/jub-notes/"><h3 className='font-bold text-[24px] m-0'>{custom?.header}</h3></Link>
         </div>
       </div>
       <div>

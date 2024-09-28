@@ -36,7 +36,7 @@ export default function Content({ requestAPI }: ContentProps) {
         </div>
       </div>
       <div className='flex flex-col gap-4'>
-        <div className='flex flex-wrap'>
+        <div className='grid grid-cols-1 md:grid-cols-2'>
           {serviceSample.map((value, index) => {
             return (
               <Card
