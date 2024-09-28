@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import BeatLoader from 'react-spinners/BeatLoader'
 import Axios from '@/utils/axios'
+import useClientMediaQuery from '@/app/Hooks/useClientMediaQuery'
 
 import {
   Modal,
@@ -52,6 +53,7 @@ export default function Home() {
   const { isSidebarOpen } = useSidebar()
   const { language } = useLanguage()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const isMobile = useClientMediaQuery()
 
   const [chatLists, setChatLists] = useState<any[]>([{
     content: 'Welcome to Paint Assistence! You can choose one of the following options or ask me anything regarding home renovation or painting! I will be glad to help.🎨',
@@ -138,7 +140,7 @@ export default function Home() {
         setCurrentResponseType(response.data.response_type)
         setCurrentSearchQuery(response.data.current_search_query)
         setButtons(response.data.buttons)
-        setColours(response.data? response.data.colours: [])
+        setColours(response.data ? response.data.colours : [])
         let msg = {
           content: response.data.response,
           sender: 'bot',
@@ -547,30 +549,38 @@ export default function Home() {
             <div className='flex w-full gap-2 justify-center'>
               <Button
                 radius='full'
-                className='border py-7 px-5'
+                className='border py-4 px-3 sm:py-7 sm:px-5'
                 onPress={onOpen}
               >
                 {customLanguage?.report}
               </Button>
-              <div className='w-[80%] text-[14px] relative'>
+              <div className='w-[80%] text-sm relative'>
                 <input
                   disabled={writingStatus ? true : false}
                   type='text'
                   placeholder={customLanguage?.placeholder}
-                  className='py-5 pl-4 pr-32 rounded-full w-full shadow-custom-inset focus-visible:outline-none'
+                  className='py-3 pl-2 pr-20 sm:py-5 sm:px-4 sm:pr-32 rounded-full w-full shadow-custom-inset focus-visible:outline-none'
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
                 />
-                <div className='absolute  right-2 bottom-[5.5px]'>
-                  <Button
+                <div className='absolute  right-2 bottom-[5px] sm:bottom-[5.5px]'>
+                  {!isMobile ? <Button
                     radius='full'
-                    className='text-white text-lg send_btn_border p-6 bg-gradient-to-tr from-[#FF8C42] to-[#FF6136]'
-                    endContent={<BsSend className='text-sswhite' />}
+                    className='text-white text-md send_btn_border sm:p-6 bg-gradient-to-tr from-[#FF8C42] to-[#FF6136]'
+                    endContent={<BsSend className='text-white' />}
                     onClick={() => sendMessage()}
                   >
-                    {customLanguage?.sendButton}
-                  </Button>
+                    <span>{customLanguage?.sendButton}</span>
+                  </Button> : <Button
+                    radius='full'
+                    className='text-white text-md send_btn_border sm:p-5 bg-gradient-to-tr from-[#FF8C42] to-[#FF6136]'
+                    onClick={() => sendMessage()}
+                    size='sm'
+                    isIconOnly
+                  >
+                    <BsSend className='text-white' />
+                  </Button>}
                 </div>
               </div>
             </div>
