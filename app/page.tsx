@@ -31,7 +31,6 @@ import BotChatItem from '@/components/UI/BotChatItem'
 import { useAppSelector, useAppDispatch } from './Redux/store'
 import { addChatList, addInfo } from './Redux/chat/chatSlice'
 import { useLanguage } from './provider/LanguageContext'
-import { PiCloudSnowLight } from 'react-icons/pi'
 import { MdExpandMore } from "react-icons/md";
 
 const override: CSSProperties = {
@@ -64,6 +63,7 @@ export default function Home() {
   const [message, setMessage] = useState('')
   const [currentResponseType, setCurrentResponseType] =
     useState<string>('INITIAL MESSAGE')
+
   const [currentSearchQuery, setCurrentSearchQuery] = useState<any>('')
   const [conversationID, setConversationID] = useState<string>('')
   const [reportContent, setReportContent] = useState<string>('')
@@ -107,8 +107,9 @@ export default function Home() {
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollTop = chatEndRef.current.scrollHeight
+
     }
-  }, [chatLists])
+  }, [chat_history])
 
   async function requestAPI(value: string) {
     setButtons([])
@@ -140,7 +141,7 @@ export default function Home() {
         setCurrentResponseType(response.data.response_type)
         setCurrentSearchQuery(response.data.current_search_query)
         setButtons(response.data.buttons)
-        setColours(response.data ? response.data.colours : [])
+        setColours(response.data?.colours ?? []);
         let msg = {
           content: response.data.response,
           sender: 'bot',
@@ -519,7 +520,7 @@ export default function Home() {
                 <div className='w-full flex justify-center'>
                   <div className={`color_box w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-${colours.length} lg:w-[60%] gap-2`}>
                     {
-                      colours.length > 0 && colours.map((value, index) => {
+                      colours?.length > 0 && colours.map((value, index) => {
                         return (
                           <div className={`cursor-pointer px-1 h-20 flex justify-center items-center rounded-md`} onClick={() => {
                             window.open(value.link)
