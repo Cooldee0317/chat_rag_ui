@@ -560,7 +560,7 @@ export default function Home() {
                   disabled={writingStatus ? true : false}
                   type='text'
                   placeholder={customLanguage?.placeholder}
-                  className='py-3 pl-2 pr-20 sm:py-5 sm:px-4 sm:pr-32 rounded-full w-full shadow-custom-inset focus-visible:outline-none'
+                  className='py-3 pl-2 pr-14 sm:py-5 sm:px-4 sm:pr-32 rounded-full w-full shadow-custom-inset focus-visible:outline-none'
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
