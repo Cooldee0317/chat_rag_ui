@@ -25,3 +25,128 @@ body {
     text-wrap: balance;
   }
 }
+
+.shadow-custom-inset {
+  box-shadow: 0px 0px 4px 2px #ffceb0 inset;
+}
+
+.send_btn_border {
+  border: 1px solid;
+  border-image-source: linear-gradient(360deg, #ff8c42 0%, #ff6136 100%);
+}
+
+h1 {
+  display: block;
+  font-size: 2em;
+  margin-block-start: 0.67em;
+  margin-block-end: 0.67em;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  font-weight: bold;
+}
+
+h2 {
+  display: block;
+  font-size: 1.5em;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  font-weight: bold;
+}
+
+h3 {
+  display: block;
+  font-size: 1.17em;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  font-weight: bold;
+}
+
+h4 {
+  display: block;
+  font-size: 1em;
+  margin-block-start: 1.33em;
+  margin-block-end: 1.33em;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  font-weight: bold;
+}
+
+h5 {
+  display: block;
+  font-size: 0.83em;
+  margin-block-start: 1.67em;
+  margin-block-end: 1.67em;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  font-weight: bold;
+}
+
+h6 {
+  display: block;
+  font-size: 0.67em;
+  margin-block-start: 2.33em;
+  margin-block-end: 2.33em;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  font-weight: bold;
+}
+
+ol {
+  display: block;
+  list-style-type: decimal; /* Sets the number style (e.g., 1, 2, 3...) */
+  margin-block-start: 1em;  /* Top margin */
+  margin-block-end: 1em;    /* Bottom margin */
+  margin-inline-start: 0;   /* Left margin */
+  margin-inline-end: 0;     /* Right margin */
+  padding-inline-start: 40px; /* Left padding */
+}
+
+ul {
+  display: block;
+  list-style-type: disc;  /* Sets bullet style */
+  margin-block-start: 1em;  /* Top margin */
+  margin-block-end: 1em;    /* Bottom margin */
+  margin-inline-start: 0;   /* Left margin */
+  margin-inline-end: 0;     /* Right margin */
+  padding-inline-start: 40px; /* Left padding */
+}
+
+/* Default CSS for li (list item) */
+li {
+  display: list-item;
+  text-align: -webkit-match-parent; /* Default alignment for list items */
+}
+
+/* ol nested within another ol */
+ol ol {
+  list-style-type: lower-alpha; /* Change nested ordered list style to a, b, c, etc. */
+}
+
+/* ol nested deeper (e.g., 3rd level) */
+ol ol ol {
+  list-style-type: lower-roman; /* Change nested list style to i, ii, iii, etc. */
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #cccaca;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1; 
+}

@@ -6,7 +6,7 @@ export default function Sidebar() {
   return (
     <>
       <div
-        className={`bg-gray-200 px-4 py-6  transition-all duration-900 ease-in-out ${
+        className={`bg-gray-400 px-4 py-6  transition-all duration-900 ease-in-out ${
           isSidebarOpen ? 'w-[30%]' : 'hidden'
         } overflow-hidden`}
       >
