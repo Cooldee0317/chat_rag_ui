@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import BeatLoader from 'react-spinners/BeatLoader'
 import Axios from '@/utils/axios'
 import useClientMediaQuery from '@/app/Hooks/useClientMediaQuery'
+import BgImage from '@/assets/image/background.webp'
 
 import {
   Modal,
@@ -520,15 +521,21 @@ export default function Home() {
                   <div className={`color_box w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-${colours.length} lg:w-[60%] gap-2`}>
                     {
                       colours?.length > 0 && colours.map((value, index) => {
-                        return (
-                          <div className={`cursor-pointer px-1 h-20 flex justify-center items-center rounded-md`} onClick={() => {
-                            window.open(value.link)
-                          }} style={{ backgroundColor: `rgb${value.rgb}` }} key={index}>
-                            <div className='text-center text-sm'>
-                              <p>{value.name}</p>
+                        if (value.rgb !== null) {
+                          return (
+                            <div className={`cursor-pointer px-1 h-20 flex justify-center items-center rounded-md`} onClick={() => {
+                              window.open(value.link)
+                            }} style={{ backgroundColor: `rgb${value.rgb}` }} key={index}>
+                              <div className='text-center text-sm'>
+                                <p>{value.name}</p>
+                              </div>
                             </div>
-                          </div>
-                        )
+                          )
+                        } else {
+                          return (<div className={`cursor-pointer px-1 h-20 flex justify-center items-center rounded-md swatch_bg`} onClick={() => {
+                            window.open('https://www.jub.eu/system-solutions-diy/dekorativne-resitve-en/')
+                          }}></div>)
+                        }
                       })
                     }
                   </div>
