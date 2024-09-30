@@ -70,16 +70,16 @@ export default function Home() {
   const [buttons, setButtons] = useState([])
   const [colours, setColours] = useState<ColorProps[]>([])
   const [pending, setPending] = useState(false)
-  const [height, setHeight] = useState<string>("0")
-  const [length, setLength] = useState<string>("0")
-  const [width, setWidth] = useState<string>("0")
-  const [windows, setWindows] = useState<string>("0")
-  const [doors, setDoors] = useState<string>("0")
-  const [ceiling, setCeiling] = useState<string>("0")
-  const [doorArea, setDoorArea] = useState<string>("0")
-  const [windowArea, setWindowArea] = useState<string>("0")
-  const [additionalArea, setAdditionalArea] = useState<string>("0")
-  const [area, setArea] = useState<string>("0")
+  const [height, setHeight] = useState<string>()
+  const [length, setLength] = useState<string>()
+  const [width, setWidth] = useState<string>()
+  const [windows, setWindows] = useState<string>()
+  const [doors, setDoors] = useState<string>()
+  const [ceiling, setCeiling] = useState<string>("")
+  const [doorArea, setDoorArea] = useState<string>()
+  const [windowArea, setWindowArea] = useState<string>()
+  const [additionalArea, setAdditionalArea] = useState<string>()
+  const [area, setArea] = useState<string>()
   const [washability, setWashability] = useState<string>('')
   const [coverage, setCoverage] = useState<string>('')
   const [priceRange, setPriceRange] = useState<string>('')
@@ -165,10 +165,10 @@ export default function Home() {
         query = `{"type":"1","area":${area},"height":0,"length":0,"width":0,"door area":0,"window area":0,"doors number":0,"windows number":0,"additional unpaintable areas":0
           }`
       } else if (currentResponseType === 'CALCULATION TYPE2') {
-        query = `{"type":"2","area":0,"height":"${height}","length":"${length}","width":"${width}","door area":0,"window area":0,"doors number":${doors},"windows number":"${windows}","additional unpaintable areas":0,"ceiling":${ceiling === 'yes' ? true : false
+        query = `{"type":"2","area":0,"height":"${height ?? 0}","length":"${length ?? 0}","width":"${width ?? 0}","door area":0,"window area":0,"doors number":${doors ?? 0},"windows number":"${windows ?? 0}","additional unpaintable areas":0,"ceiling":${ceiling === 'yes' ? true : false
           }}`
       } else if (currentResponseType === 'CALCULATION TYPE3') {
-        query = `{"type":"3","area":0,"height":"${height}","length":"${length}","width":"${width}","door area":"${doorArea}","window area":"${windowArea}","doors number":"${doors}","windows number":"${windows}","additional unpaintable areas":"${additionalArea}","ceiling":${ceiling === 'yes' ? true : false
+        query = `{"type":"3","area":0,"height":"${height ?? 0}","length":"${length ?? 0}","width":"${width ?? 0}","door area":"${doorArea ?? 0}","window area":"${windowArea ?? 0}","doors number":"${doors ?? 0}","windows number":"${windows ?? 0}","additional unpaintable areas":"${additionalArea ?? 0}","ceiling":${ceiling === 'yes' ? true : false
           }}`
       } else if (currentResponseType === 'ADDITIONAL INFO') {
         query = `User selection: Washability: ${washability}, Coverage: ${coverage}, Price range: ${priceRange}, Finish: ${finish}, Features: ${features.toString()}`
@@ -527,7 +527,6 @@ export default function Home() {
                           }} style={{ backgroundColor: `rgb${value.rgb}` }} key={index}>
                             <div className='text-center text-sm'>
                               <p>{value.name}</p>
-                              <p>{value.rgb}</p>
                             </div>
                           </div>
                         )
