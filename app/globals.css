@@ -150,3 +150,10 @@ ol ol ol {
 ::-webkit-scrollbar-thumb:hover {
   background: #a1a1a1; 
 }
+
+.swatch_bg {
+  background-image: url(../assets/image/background.webp);
+  background-position: top right;
+  background-size: cover;
+  background-repeat: no-repeat;
+}

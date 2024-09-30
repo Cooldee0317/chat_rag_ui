@@ -19,7 +19,7 @@ export default function Card(props: cardProps) {
     } else if (order === 2) {
       body = 'Guide me through the steps of painting with Jupol Gold'
     } else {
-      body = 'Help me choose the right colour for my room'
+      body = 'Calculate the amount of paint I will need for my project'
     }
 
     requestAPI(body)

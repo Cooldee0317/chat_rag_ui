@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import BeatLoader from 'react-spinners/BeatLoader'
 import Axios from '@/utils/axios'
 import useClientMediaQuery from '@/app/Hooks/useClientMediaQuery'
+import BgImage from '@/assets/image/background.webp'
 
 import {
   Modal,
@@ -70,16 +71,16 @@ export default function Home() {
   const [buttons, setButtons] = useState([])
   const [colours, setColours] = useState<ColorProps[]>([])
   const [pending, setPending] = useState(false)
-  const [height, setHeight] = useState<string>("0")
-  const [length, setLength] = useState<string>("0")
-  const [width, setWidth] = useState<string>("0")
-  const [windows, setWindows] = useState<string>("0")
-  const [doors, setDoors] = useState<string>("0")
-  const [ceiling, setCeiling] = useState<string>("0")
-  const [doorArea, setDoorArea] = useState<string>("0")
-  const [windowArea, setWindowArea] = useState<string>("0")
-  const [additionalArea, setAdditionalArea] = useState<string>("0")
-  const [area, setArea] = useState<string>("0")
+  const [height, setHeight] = useState<string>()
+  const [length, setLength] = useState<string>()
+  const [width, setWidth] = useState<string>()
+  const [windows, setWindows] = useState<string>()
+  const [doors, setDoors] = useState<string>()
+  const [ceiling, setCeiling] = useState<string>("")
+  const [doorArea, setDoorArea] = useState<string>()
+  const [windowArea, setWindowArea] = useState<string>()
+  const [additionalArea, setAdditionalArea] = useState<string>()
+  const [area, setArea] = useState<string>()
   const [washability, setWashability] = useState<string>('')
   const [coverage, setCoverage] = useState<string>('')
   const [priceRange, setPriceRange] = useState<string>('')
@@ -165,10 +166,10 @@ export default function Home() {
         query = `{"type":"1","area":${area},"height":0,"length":0,"width":0,"door area":0,"window area":0,"doors number":0,"windows number":0,"additional unpaintable areas":0
           }`
       } else if (currentResponseType === 'CALCULATION TYPE2') {
-        query = `{"type":"2","area":0,"height":"${height}","length":"${length}","width":"${width}","door area":0,"window area":0,"doors number":${doors},"windows number":"${windows}","additional unpaintable areas":0,"ceiling":${ceiling === 'yes' ? true : false
+        query = `{"type":"2","area":0,"height":"${height ?? 0}","length":"${length ?? 0}","width":"${width ?? 0}","door area":0,"window area":0,"doors number":${doors ?? 0},"windows number":"${windows ?? 0}","additional unpaintable areas":0,"ceiling":${ceiling === 'yes' ? true : false
           }}`
       } else if (currentResponseType === 'CALCULATION TYPE3') {
-        query = `{"type":"3","area":0,"height":"${height}","length":"${length}","width":"${width}","door area":"${doorArea}","window area":"${windowArea}","doors number":"${doors}","windows number":"${windows}","additional unpaintable areas":"${additionalArea}","ceiling":${ceiling === 'yes' ? true : false
+        query = `{"type":"3","area":0,"height":"${height ?? 0}","length":"${length ?? 0}","width":"${width ?? 0}","door area":"${doorArea ?? 0}","window area":"${windowArea ?? 0}","doors number":"${doors ?? 0}","windows number":"${windows ?? 0}","additional unpaintable areas":"${additionalArea ?? 0}","ceiling":${ceiling === 'yes' ? true : false
           }}`
       } else if (currentResponseType === 'ADDITIONAL INFO') {
         query = `User selection: Washability: ${washability}, Coverage: ${coverage}, Price range: ${priceRange}, Finish: ${finish}, Features: ${features.toString()}`
@@ -401,8 +402,7 @@ export default function Home() {
               className='bg-[#F1F6F6]'
               key={i}
               onClick={() => {
-                setMessage(i.toString())
-                sendMessage()
+                requestAPI(i.toString())
               }}
             >
               {i === 1 && 'Enter known area'}
@@ -455,7 +455,7 @@ export default function Home() {
                 } else if (msg == "JUPOL JUNIOR Catalogue") {
                   window.open("https://www.jub.si/izdelki/jupol-junior/", "_blank");
                 } else if (msg == "Designer Colours") {
-                  window.open("https://www.jub.eu/surprising-ideas-for-painting-walls/", "_blank");
+                  window.open("https://siqbots.com/designer-colours/", "_blank");
                 } else if (msg == "DECOR Range") {
                   window.open("https://www.jub.eu/system-solutions-diy/dekorativne-resitve-en/", "_blank");
                 } else {
@@ -521,16 +521,21 @@ export default function Home() {
                   <div className={`color_box w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-${colours.length} lg:w-[60%] gap-2`}>
                     {
                       colours?.length > 0 && colours.map((value, index) => {
-                        return (
-                          <div className={`cursor-pointer px-1 h-20 flex justify-center items-center rounded-md`} onClick={() => {
-                            window.open(value.link)
-                          }} style={{ backgroundColor: `rgb${value.rgb}` }} key={index}>
-                            <div className='text-center text-sm'>
-                              <p>{value.name}</p>
-                              <p>{value.rgb}</p>
+                        if (value.rgb !== null) {
+                          return (
+                            <div className={`cursor-pointer px-1 h-20 flex justify-center items-center rounded-md`} onClick={() => {
+                              window.open(value.link)
+                            }} style={{ backgroundColor: `rgb${value.rgb}` }} key={index}>
+                              <div className='text-center text-sm'>
+                                <p>{value.name}</p>
+                              </div>
                             </div>
-                          </div>
-                        )
+                          )
+                        } else {
+                          return (<div className={`cursor-pointer px-1 h-20 flex justify-center items-center rounded-md swatch_bg`} onClick={() => {
+                            window.open('https://www.jub.eu/system-solutions-diy/dekorativne-resitve-en/')
+                          }}></div>)
+                        }
                       })
                     }
                   </div>
