@@ -401,8 +401,7 @@ export default function Home() {
               className='bg-[#F1F6F6]'
               key={i}
               onClick={() => {
-                setMessage(i.toString())
-                sendMessage()
+                requestAPI(i.toString())
               }}
             >
               {i === 1 && 'Enter known area'}
