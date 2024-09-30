@@ -454,7 +454,7 @@ export default function Home() {
                 } else if (msg == "JUPOL JUNIOR Catalogue") {
                   window.open("https://www.jub.si/izdelki/jupol-junior/", "_blank");
                 } else if (msg == "Designer Colours") {
-                  window.open("https://www.jub.eu/surprising-ideas-for-painting-walls/", "_blank");
+                  window.open("https://siqbots.com/designer-colours/", "_blank");
                 } else if (msg == "DECOR Range") {
                   window.open("https://www.jub.eu/system-solutions-diy/dekorativne-resitve-en/", "_blank");
                 } else {
