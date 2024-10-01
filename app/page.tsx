@@ -11,7 +11,6 @@ import 'react-toastify/dist/ReactToastify.css'
 import BeatLoader from 'react-spinners/BeatLoader'
 import Axios from '@/utils/axios'
 import useClientMediaQuery from '@/app/Hooks/useClientMediaQuery'
-import BgImage from '@/assets/image/background.webp'
 
 import {
   Modal,
@@ -94,7 +93,7 @@ export default function Home() {
   const inputEle = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
-    let id = generateConversationID()
+    const id = generateConversationID()
     setConversationID(id)
     inputEle.current?.focus()
   }, [])
@@ -118,7 +117,7 @@ export default function Home() {
     setButtons([])
     setColours([])
 
-    let userMsg = {
+    const userMsg = {
       content: value,
       sender: 'user',
     }
@@ -193,7 +192,7 @@ export default function Home() {
 
   async function handleReport() {
     if (reportContent !== '') {
-      let body = {
+      const body = {
         chat_history: chatLists,
         message: reportContent,
       }
@@ -444,7 +443,7 @@ export default function Home() {
                     '_blank'
                   )
                   const addon = `🎨Once you've found the color that speaks to you, let's dive into finding the perfect paint to match!\n\nTo get started, could you share a bit more about the room you're painting? And if you have any preferences, such as:\n- Budget\n- Washability\n- Health impact (like low VOCs or allergies)\n- Special features (like mold protection, stain resistance, thermal insulation, etc.)\n\nI'm here to help you find exactly what you're looking for! Let's make this project a breeze!🏠✨`
-                  let msg = {
+                  const msg = {
                     content: addon,
                     sender: 'bot',
                   }
