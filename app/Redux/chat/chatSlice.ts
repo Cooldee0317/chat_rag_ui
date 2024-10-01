@@ -27,7 +27,7 @@ export const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    addChatList: (state, action: PayloadAction<Object>) => {
+    addChatList: (state, action: PayloadAction<object>) => {
       state.lists = [...state.lists, action.payload]
     },
     changeWriteStatus: (state, action: PayloadAction<boolean>) => {
