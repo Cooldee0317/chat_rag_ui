@@ -149,7 +149,7 @@ export default function Bot() {
         setCurrentResponseType(response.data.response_type)
         setCurrentSearchQuery(response.data.current_search_query)
         setButtons(response.data.buttons)
-        setColours(response.data?.colours.reverse() ?? []);
+        setColours(response.data?.colours?.reverse() ?? []);
         const msg = {
           content: response.data.response,
           sender: 'bot',
