@@ -531,13 +531,12 @@ export default function Home() {
                               </div>
                             </div>
                           )
-                        } else {
-                          return (<div className={`cursor-pointer px-1 h-20 flex justify-center items-center rounded-md swatch_bg`} onClick={() => {
-                            window.open('https://www.jub.eu/system-solutions-diy/dekorativne-resitve-en/')
-                          }}></div>)
                         }
                       })
                     }
+                    <div className={`cursor-pointer px-1 h-20 flex justify-center items-center rounded-md swatch_bg`} onClick={() => {
+                      window.open('https://www.jub.eu/system-solutions-diy/dekorativne-resitve-en/')
+                    }}></div>
                   </div>
                 </div>
                 <div
